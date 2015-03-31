@@ -1,5 +1,7 @@
 <?php
 
+require_once HOME . DS . ".." . DS . 'config' . DS . 'config.php';
+
 $controller = "Index";
 if(isset($_GET["action"])) {
     $action = $_GET["action"];
@@ -25,6 +27,8 @@ if (isset($_GET['load']))
         $query = $params[2];
     }
 }
+
+$db = new PDO("mysql:dbname=" . DB_NAME . ";host=" . DB_HOST, DB_USER, DB_PASSWORD);
 
 $modelName = $controller;
 $controller .= 'Controller';
