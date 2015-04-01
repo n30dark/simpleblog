@@ -3,9 +3,9 @@
  *
  * SimpleBlog
  *
- * Blog Post Object
+ * User Object
  *
- * This is the class for a post
+ * This is the class for an user
  *
  * @author    Sergio Paulino <me@sergiopaulino.net>
  * @link      http://www.sergiopaulino.net
@@ -13,7 +13,7 @@
  * @license   All rights reserved
  */
 
-class BlogPost extends DataMapper{
+class User extends DataMapper{
 
     public $id;
     public $user;
@@ -33,15 +33,17 @@ class BlogPost extends DataMapper{
 
     public function login($user, $password) {
         try {
+
+            $this->db = new PDO("mysql:dbname=" . DB_NAME . ";host=" . DB_HOST, DB_USER, DB_PASSWORD);
             $sql = <<<SQL
 SELECT count(`id`) FROM `user`
 WHERE `user` = :user AND `password` = :password
 SQL;
 
-            $st = self::$db->prepare($sql);
+            $st = $this->db->prepare($sql);
             $st->execute(array(
                 ':user' => $user,
-                ':password'=> password_hash($password, PASSWORD_BCRYPT)
+                ':password'=> md5($password)
             ));
             if($st->fetch() > 0) {
                 return true;
@@ -52,27 +54,6 @@ SQL;
         } catch(Exception $e) {
             echo "Application error: " . $e->getMessage();
         }
-    }
-
-    public function editPost($id, $data) {
-
-        try {
-            $sql = <<<SQL
-UPDATE `post` SET `title` = :title, `slug` = :slug, `text` = :text
-WHERE `id` = :id
-SQL;
-
-            $st = self::$db->prepare($sql);
-            $st->execute(array(
-                ':title' => $data->title,
-                ':slug' => $data->slug,
-                ':text' => $data->text,
-                ':id' => $id
-            ));
-        } catch(Exception $e) {
-            echo "Application error: " . $e->getMessage();
-        }
-
     }
 
 }

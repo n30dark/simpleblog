@@ -13,15 +13,18 @@
  * @license   All rights reserved
  */
 
-class BlogPost extends DataMapper{
+class BlogPost{
 
     public $id;
     public $title;
     public $slug;
     public $text;
     public $date;
+    private $db;
 
     public function __construct($data) {
+
+        $this->db = new PDO("mysql:dbname=" . DB_NAME . ";host=" . DB_HOST, DB_USER, DB_PASSWORD);
 
         if(isset($data->id)) {
             $this->id = $data->id;
@@ -37,19 +40,20 @@ class BlogPost extends DataMapper{
 
     }
 
-    public function addPost() {
+    public function addPost($data) {
 
         try {
+            $this->db = new PDO("mysql:dbname=" . DB_NAME . ";host=" . DB_HOST, DB_USER, DB_PASSWORD);
+
             $sql = <<<SQL
-INSERT INTO `post`(`title`, `slug`, `text`)
-VALUES (:title,:slug,:text)
+INSERT INTO `post`(`title`, `text`)
+VALUES (:title,:text)
 SQL;
 
-            $st = self::$db->prepare($sql);
+            $st = $this->db->prepare($sql);
             $st->execute(array(
-                ':title' => $this->title,
-                ':slug' => $this->slug,
-                ':text' => $this->text
+                ':title' => $data->title,
+                ':text' => $data->text
             ));
         } catch(Exception $e) {
             echo "Application error: " . $e->getMessage();
@@ -61,10 +65,12 @@ SQL;
     public function delPost($id) {
 
         try{
+            $this->db = new PDO("mysql:dbname=" . DB_NAME . ";host=" . DB_HOST, DB_USER, DB_PASSWORD);
+
             $sql = <<<SQL
 DELETE FROM `post` WHERE `id` = $id
 SQL;
-            $st = self::$db->prepare($sql);
+            $st = $this->db->prepare($sql);
             $st->execute(array(":id" => $id));
 
         } catch(Exception $e) {
@@ -75,17 +81,22 @@ SQL;
 
     public function getPost($id) {
         try {
+            $this->db = new PDO("mysql:dbname=" . DB_NAME . ";host=" . DB_HOST, DB_USER, DB_PASSWORD);
+
             $sql = <<<SQL
 SELECT * FROM `post` WHERE `id` = :id
 SQL;
 
-            $st = self::$db->prepare($sql);
+            $st = $this->db->prepare($sql);
             $st->execute(array(
                 ':id' => $id
             ));
+            $ret = null;
             while($row = $st->fetch()) {
-                return $this->__construct((Object)$row);
+                $ret = new BlogPost((Object)$row);
             }
+
+            return $ret;
 
         } catch(Exception $e) {
             echo "Application error: " . $e->getMessage();
@@ -95,18 +106,44 @@ SQL;
     public function editPost($id, $data) {
 
         try {
+            $this->db = new PDO("mysql:dbname=" . DB_NAME . ";host=" . DB_HOST, DB_USER, DB_PASSWORD);
+
             $sql = <<<SQL
-UPDATE `post` SET `title` = :title, `slug` = :slug, `text` = :text
+UPDATE `post` SET `title` = :title, `text` = :text
 WHERE `id` = :id
 SQL;
 
-            $st = self::$db->prepare($sql);
+            $st = $this->db->prepare($sql);
             $st->execute(array(
                 ':title' => $data->title,
-                ':slug' => $data->slug,
                 ':text' => $data->text,
                 ':id' => $id
             ));
+        } catch(Exception $e) {
+            echo "Application error: " . $e->getMessage();
+        }
+
+    }
+
+    public function getAll() {
+
+        try {
+
+            $this->db = new PDO("mysql:dbname=" . DB_NAME . ";host=" . DB_HOST, DB_USER, DB_PASSWORD);
+
+            $sql = <<<SQL
+SELECT * FROM `post`
+SQL;
+
+            $st = $this->db->prepare($sql);
+            $st->execute();
+            $posts = [];
+            while($row = $st->fetch()) {
+                $posts[] = new BlogPost((Object)$row);
+            }
+
+            return $posts;
+
         } catch(Exception $e) {
             echo "Application error: " . $e->getMessage();
         }

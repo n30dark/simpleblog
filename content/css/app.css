@@ -1,43 +1,5 @@
-body {
-  background: black; }
-
-.gallery {
-  width: 100%; }
-  .gallery a {
-    margin: 0px;
-    height: 300px; }
-    .gallery a img.flickrpic {
-      opacity: 0.8;
-      width: 20%;
-      height: 300px; }
-    .gallery a .icon {
-      color: white;
-      background: black;
-      -moz-border-radius: 10px;
-      -webkit-border-radius: 10px;
-      border-radius: 15px;
-      height: 23px;
-      width: 30px;
-      position: absolute;
-      z-index: 10;
-      margin-top: 150px;
-      margin-left: 10%;
-      display: none;
-      text-align: center;
-      padding-top: 7px; }
-    .gallery a img.flickrpic:hover {
-      opacity: 1.0; }
-    .gallery a span {
-      position: absolute;
-      z-index: 10;
-      margin-top: 260px;
-      background: black;
-      padding: 5px;
-      opacity: 0.8;
-      color: white;
-      font-size: 10px;
-      font-family: Arial; }
-  .gallery a:hover .icon {
-    display: inline-block; }
-
-/*# sourceMappingURL=app.css.map */
+.form-signin {
+    max-width: 330px;
+    padding: 15px;
+    margin: 0 auto;
+}
